@@ -1,5 +1,7 @@
 package com.alfatecsistemas.sina.service.impl;
 
+import com.alfatecsistemas.sina.dao.ProfessionalDao;
+import com.alfatecsistemas.sina.domain.OrmaProfessionals;
 import com.alfatecsistemas.sina.domain.SecuUsers;
 import com.alfatecsistemas.sina.repository.UsersRepository;
 import com.alfatecsistemas.sina.service.UsersService;
@@ -16,10 +18,15 @@ public class UsersServiceImpl implements UsersService {
     @Autowired
     private UsersRepository usersRepository;
 
+    @Autowired
+    private ProfessionalDao professionalDao;
+
+    @Override
     public List<SecuUsers> getUsers() {
         return usersRepository.findAll();
     }
 
+    @Override
     public SecuUsers getUser(Integer userId) {
         return usersRepository.findOne(userId);
     }
@@ -28,9 +35,15 @@ public class UsersServiceImpl implements UsersService {
         return usersRepository.getUserByProfId(profId);
     }
 
+    @Override
     public SecuUsers getLogin(String name, String password) {
         String passwordSha1 = EncryptUtils.sha1(password);
         return usersRepository.getLogin(name, passwordSha1);
+    }
+
+    @Override
+    public SecuUsers getUserAndProfessional(Integer userId, Integer profId) {
+        return usersRepository.getUserAndProfessional(userId, profId);
     }
 
     @Override
@@ -51,7 +64,23 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public SecuUsers insertUser(Integer profId, String name, String password) throws Exception {
-        return null;
+        OrmaProfessionals professional = professionalDao.findOne(profId);
+        SecuUsers user = null;
+
+        if (professional == null) {
+            String passwordSha1 = EncryptUtils.sha1(password);
+
+            user = new SecuUsers();
+            user.setProfId(profId);
+            user.setUserLogin(name);
+            user.setUserPassword(passwordSha1);
+
+            usersRepository.save(user);
+        } else {
+            throw new Exception(String.format("The user with profId %s already exists", profId));
+        }
+
+        return user;
     }
 
     @Override
