@@ -3,10 +3,10 @@ package com.alfatecsistemas.sina.dao.impl;
 import com.alfatecsistemas.sina.dao.ProfessionalDao;
 import com.alfatecsistemas.sina.domain.OrmaProfessionals;
 import com.alfatecsistemas.sina.dto.FilterProfessionalsDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public class ProfessionalDaoImpl implements ProfessionalDao {
 
-    @Autowired
+    @PersistenceContext
     EntityManager em;
 
     public List<OrmaProfessionals> findAll(FilterProfessionalsDto filterProfessionals) {

@@ -1,6 +1,6 @@
 package com.alfatecsistemas.sina.controller;
 
-import com.alfatecsistemas.sina.domain.OrmaProfessionals;
+import com.alfatecsistemas.sina.dto.ProfessionalDto;
 import com.alfatecsistemas.sina.service.ProfessionalsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +20,13 @@ public class ProfessionalsController {
     private ProfessionalsService professionalsService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<OrmaProfessionals> getProfessionals(@RequestParam final Map<String, String> params) {
+    public List<ProfessionalDto> getProfessionals(@RequestParam final Map<String, String> params) {
 
         return professionalsService.getProfessionals(params);
     }
 
     @RequestMapping(path = "/{profId}", method = RequestMethod.GET)
-    public OrmaProfessionals getProfessional(@PathVariable Integer profId) {
+    public ProfessionalDto getProfessional(@PathVariable Integer profId) {
         return professionalsService.getProfessional(profId);
     }
 }

@@ -3,6 +3,8 @@ package com.alfatecsistemas.sina.service.impl;
 import com.alfatecsistemas.sina.dao.ProfessionalDao;
 import com.alfatecsistemas.sina.domain.OrmaProfessionals;
 import com.alfatecsistemas.sina.dto.FilterProfessionalsDto;
+import com.alfatecsistemas.sina.dto.ProfessionalDto;
+import com.alfatecsistemas.sina.mapper.ProfessionalMapper;
 import com.alfatecsistemas.sina.service.ProfessionalsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProfessionalsServiceImpl implements ProfessionalsService {
@@ -17,16 +20,15 @@ public class ProfessionalsServiceImpl implements ProfessionalsService {
     @Autowired
     private ProfessionalDao professionalDao;
 
-    public List<OrmaProfessionals> getProfessionals(Map<String, String> params) {
-
+    public List<ProfessionalDto> getProfessionals(Map<String, String> params) {
         final FilterProfessionalsDto filterProfessionals = maperProfessionals(params);
-
-        return professionalDao.findAll(filterProfessionals);
+        List<OrmaProfessionals> professionals = professionalDao.findAll(filterProfessionals);
+        return professionals.stream().map(ProfessionalMapper::entityToDto).collect(Collectors.toList());
     }
 
-    public OrmaProfessionals getProfessional(Integer profId) {
-
-        return professionalDao.findOne(profId);
+    public ProfessionalDto getProfessional(Integer profId) {
+        OrmaProfessionals professional = professionalDao.findOne(profId);
+        return ProfessionalMapper.entityToDto(professional);
     }
 
     private static FilterProfessionalsDto maperProfessionals(final Map<String, String> params) {

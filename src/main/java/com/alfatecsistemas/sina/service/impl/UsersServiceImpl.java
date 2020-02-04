@@ -3,6 +3,9 @@ package com.alfatecsistemas.sina.service.impl;
 import com.alfatecsistemas.sina.dao.ProfessionalDao;
 import com.alfatecsistemas.sina.domain.OrmaProfessionals;
 import com.alfatecsistemas.sina.domain.SecuUsers;
+import com.alfatecsistemas.sina.dto.UserDto;
+import com.alfatecsistemas.sina.mapper.ProfessionalMapper;
+import com.alfatecsistemas.sina.mapper.UserMapper;
 import com.alfatecsistemas.sina.repository.UsersRepository;
 import com.alfatecsistemas.sina.service.UsersService;
 import com.alfatecsistemas.sina.utils.EncryptUtils;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -22,48 +26,51 @@ public class UsersServiceImpl implements UsersService {
     private ProfessionalDao professionalDao;
 
     @Override
-    public List<SecuUsers> getUsers() {
-        return usersRepository.findAll();
+    public List<UserDto> getUsers() {
+        List<SecuUsers> users = usersRepository.findAll();
+        return users.stream().map(UserMapper::entityToDto).collect(Collectors.toList());
     }
 
     @Override
-    public SecuUsers getUser(Integer userId) {
-        return usersRepository.findOne(userId);
-    }
-
-    public SecuUsers getUserByProfId(Integer profId) {
-        return usersRepository.getUserByProfId(profId);
+    public UserDto getUser(Integer userId) {
+        SecuUsers user = usersRepository.findOne(userId);
+        return UserMapper.entityToDto(user);
     }
 
     @Override
-    public SecuUsers getLogin(String name, String password) {
+    public UserDto getLogin(String name, String password) {
         String passwordSha1 = EncryptUtils.sha1(password);
-        return usersRepository.getLogin(name, passwordSha1);
+        SecuUsers user = usersRepository.getLogin(name, passwordSha1);
+        return UserMapper.entityToDto(user);
     }
 
     @Override
-    public SecuUsers getUserAndProfessional(Integer userId, Integer profId) {
-        return usersRepository.getUserAndProfessional(userId, profId);
+    public UserDto getUserAndProfessional(Integer userId, Integer profId) {
+        SecuUsers user = usersRepository.getUserAndProfessional(userId, profId);
+        UserDto dto = UserMapper.entityToDto(user);
+        dto.setProfessional(ProfessionalMapper.entityToDto(user.getOrmaProfessionals()));
+        return dto;
     }
 
     @Override
-    public SecuUsers updateUser(Integer userId, String name, String password) throws NotFoundException {
-        SecuUsers user = getUser(userId);
+    public UserDto updateUser(Integer userId, String name, String password) throws NotFoundException {
+        SecuUsers user = usersRepository.findOne(userId);
 
         if (user != null) {
             String passwordSha1 = EncryptUtils.sha1(password);
 
             user.setUserLogin(name);
             user.setUserPassword(passwordSha1);
+            usersRepository.save(user);
         } else {
             throw new NotFoundException(String.format("The user with name %s not exists", name));
         }
 
-        return usersRepository.save(user);
+        return UserMapper.entityToDto(user);
     }
 
     @Override
-    public SecuUsers insertUser(Integer profId, String name, String password) throws Exception {
+    public UserDto insertUser(Integer profId, String name, String password) throws Exception {
         OrmaProfessionals professional = professionalDao.findOne(profId);
         SecuUsers user = null;
 
@@ -80,11 +87,11 @@ public class UsersServiceImpl implements UsersService {
             throw new Exception(String.format("The user with profId %s already exists", profId));
         }
 
-        return user;
+        return UserMapper.entityToDto(user);
     }
 
     @Override
-    public SecuUsers deleteUser(Integer userId) throws NotFoundException {
+    public UserDto deleteUser(Integer userId) throws NotFoundException {
         SecuUsers user = usersRepository.findOne(userId);
 
         if (user != null) {
@@ -93,6 +100,6 @@ public class UsersServiceImpl implements UsersService {
             throw new NotFoundException(String.format("The user with id %s not exists", userId));
         }
 
-        return user;
+        return UserMapper.entityToDto(user);
     }
 }

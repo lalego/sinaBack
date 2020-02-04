@@ -1,23 +1,23 @@
 package com.alfatecsistemas.sina.service;
 
-import com.alfatecsistemas.sina.domain.SecuUsers;
+import com.alfatecsistemas.sina.dto.UserDto;
 import javassist.NotFoundException;
 
 import java.util.List;
 
 public interface UsersService {
 
-    List<SecuUsers> getUsers();
+    List<UserDto> getUsers();
 
-    SecuUsers getUser(Integer userId);
+    UserDto getUser(Integer userId);
 
-    SecuUsers getLogin(String name, String password);
+    UserDto getLogin(String name, String password);
 
-    SecuUsers getUserAndProfessional(Integer userId, Integer profId);
+    UserDto getUserAndProfessional(Integer userId, Integer profId);
 
-    SecuUsers updateUser(Integer userId, String name, String password) throws NotFoundException;
+    UserDto updateUser(Integer userId, String name, String password) throws NotFoundException;
 
-    SecuUsers insertUser(Integer userId, String name, String password) throws Exception;
+    UserDto insertUser(Integer userId, String name, String password) throws Exception;
 
-    SecuUsers deleteUser(Integer userId) throws NotFoundException;
+    UserDto deleteUser(Integer userId) throws NotFoundException;
 }

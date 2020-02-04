@@ -1,6 +1,5 @@
 package com.alfatecsistemas.sina.controller;
 
-import com.alfatecsistemas.sina.domain.SecuUsers;
 import com.alfatecsistemas.sina.dto.UserDto;
 import com.alfatecsistemas.sina.service.UsersService;
 import javassist.NotFoundException;
@@ -23,32 +22,31 @@ public class UsersController {
     private UsersService usersService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<SecuUsers> getUsers() {
+    public List<UserDto> getUsers() {
         return usersService.getUsers();
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.GET)
-    public SecuUsers getUser(@PathVariable Integer userId) {
+    public UserDto getUser(@PathVariable Integer userId) {
         return usersService.getUser(userId);
     }
 
     @RequestMapping(path = "/login", method = RequestMethod.GET)
-    public SecuUsers getLogin(@RequestBody UserDto user) {
+    public UserDto getLogin(@RequestBody UserDto user) {
         return usersService.getLogin(user.getName(), user.getPassword());
     }
 
     @RequestMapping(path = "/{userId}/professionals/{profId}", method = RequestMethod.GET)
-    public SecuUsers getUserAndProfessional(@PathVariable Integer userId, @PathVariable Integer profId) {
-        SecuUsers users = usersService.getUserAndProfessional(userId, profId);
-        return users;
+    public UserDto getUserAndProfessional(@PathVariable Integer userId, @PathVariable Integer profId) {
+        return usersService.getUserAndProfessional(userId, profId);
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.PUT)
-    public ResponseEntity<SecuUsers> updateUser(@PathVariable Integer userId, @RequestBody UserDto dto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Integer userId, @RequestBody UserDto dto) {
 
         ResponseEntity response = null;
         try {
-            SecuUsers user = usersService.updateUser(userId, dto.getName(), dto.getPassword());
+            UserDto user = usersService.updateUser(userId, dto.getName(), dto.getPassword());
             response = ResponseEntity.ok(user);
         } catch (NotFoundException e) {
             LOGGER.error(e.toString());
@@ -59,10 +57,10 @@ public class UsersController {
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.POST)
-    public ResponseEntity<SecuUsers> insertUser(@PathVariable Integer userId, @RequestBody UserDto dto) {
+    public ResponseEntity<UserDto> insertUser(@PathVariable Integer userId, @RequestBody UserDto dto) {
         ResponseEntity response = null;
         try {
-            SecuUsers user = usersService.insertUser(userId, dto.getName(), dto.getPassword());
+            UserDto user = usersService.insertUser(userId, dto.getName(), dto.getPassword());
             response = ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (Exception e) {
             LOGGER.error(e.toString());
@@ -73,10 +71,10 @@ public class UsersController {
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.DELETE)
-    public ResponseEntity<SecuUsers> deleteUser(@PathVariable Integer userId) {
+    public ResponseEntity<UserDto> deleteUser(@PathVariable Integer userId) {
         ResponseEntity response = null;
         try {
-            SecuUsers user = usersService.deleteUser(userId);
+            UserDto user = usersService.deleteUser(userId);
             response = ResponseEntity.ok(user);
         } catch (NotFoundException e) {
             LOGGER.error(e.toString());
