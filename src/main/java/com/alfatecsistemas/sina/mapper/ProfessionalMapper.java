@@ -18,6 +18,10 @@ public final class ProfessionalMapper {
    * @param entity The entity.
    */
   public static ProfessionalDto entityToDto(final OrmaProfessionals entity) {
+    if (entity == null) {
+      return null;
+    }
+
     ProfessionalDto dto = new ProfessionalDto();
     dto.setId(entity.getProfId());
     dto.setName(entity.getProfName());

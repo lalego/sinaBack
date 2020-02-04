@@ -18,6 +18,10 @@ public final class UserMapper {
    * @param entity The entity.
    */
   public static UserDto entityToDto(final SecuUsers entity) {
+    if (entity == null) {
+      return null;
+    }
+
     UserDto dto = new UserDto();
     dto.setId(entity.getUserId());
     dto.setName(entity.getUserLogin());

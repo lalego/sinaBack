@@ -47,8 +47,11 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public UserDto getUserAndProfessional(Integer userId, Integer profId) {
         SecuUsers user = usersRepository.getUserAndProfessional(userId, profId);
-        UserDto dto = UserMapper.entityToDto(user);
-        dto.setProfessional(ProfessionalMapper.entityToDto(user.getOrmaProfessionals()));
+        UserDto dto = null;
+        if (user != null) {
+            dto = UserMapper.entityToDto(user);
+            dto.setProfessional(ProfessionalMapper.entityToDto(user.getOrmaProfessionals()));
+        }
         return dto;
     }
 
